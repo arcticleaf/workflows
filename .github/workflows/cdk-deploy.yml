@@ -32,12 +32,6 @@ jobs:
     steps:
     - name: Checkout Code
       uses: actions/checkout@v2
-      
-    - name: Install Node & Dependencies
-      uses: actions/setup-node@v2
-      with:
-        node-version-file: '.nvmrc'
-    - run: npm install
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -48,10 +42,17 @@ jobs:
         aws-secret-access-key: ${{ secrets.AL_GITHUB_AWS_SECRET_ACCESS_KEY }}
         role-external-id: ${{ inputs.externalRoleId }}
         role-duration-seconds: 1200
+        role-session-name: GitHubAction - $GITHUB_REPOSITORY - $GITHUB_SHA
         role-skip-session-tagging: true
 
+    - name: Install NPM
+      run: 'sudo apt update -y && sudo apt install nodejs npm -y'
+
     - name: Install AWS CDK
-      run: npm install -g aws-cdk
+      run: 'sudo npm install -g aws-cdk'
+
+    - name: Install Node Modules
+      run: npm install
       
     - name: CDK Synth
       run: cdk synth
