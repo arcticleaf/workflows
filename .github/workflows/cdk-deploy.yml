@@ -48,6 +48,7 @@ jobs:
         aws-secret-access-key: ${{ secrets.AL_GITHUB_AWS_SECRET_ACCESS_KEY }}
         role-external-id: ${{ inputs.externalRoleId }}
         role-duration-seconds: 1200
+        role-skip-session-tagging: true
 
     - name: Install AWS CDK
       run: npm install -g aws-cdk
