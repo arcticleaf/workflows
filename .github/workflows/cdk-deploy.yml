@@ -14,6 +14,13 @@ on:
         required: true
         description: 'External role id of the role being used in the account being deployed into'
         type: string
+    secrets:
+      AL_GITHUB_AWS_ACCESS_KEY_ID:
+        required: true
+      AL_GITHUB_AWS_SECRET_ACCESS_KEY:
+        required: true
+      AL_GITHUB_AWS_ROLE_NAME:
+        required: true
 jobs:
   reusable_cdk_deploy:
     name: Deploy CDK to AWS account
