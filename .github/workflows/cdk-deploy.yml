@@ -1,0 +1,56 @@
+on:
+  workflow_call:
+    inputs:
+      region:
+        required: false
+        description: 'Region of the account to deploy into'
+        type: string
+        default: 'us-east-1'
+      accountId:
+        required: true
+        description: 'Account id of the account being deployed into'
+        type: string
+      externalRoleId:
+        required: true
+        description: 'External role id of the role being used in the account being deployed into'
+        type: string
+    secrets:
+      AL_GITHUB_AWS_ACCESS_KEY_ID:
+        required: true
+      AL_GITHUB_AWS_SECRET_ACCESS_KEY:
+        required: true
+      AL_GITHUB_AWS_ROLE_NAME:
+        required: true
+jobs:
+  reusable_cdk_deploy:
+    name: Deploy CDK to AWS account
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v2
+      
+    - name: Install Node & Dependencies
+      uses: actions/setup-node@v2
+      with:
+        node-version-file: '.nvmrc'
+    - run: npm install
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        role-to-assume: arn:aws:iam::${{ inputs.accountId }}:role/{{ secrets.AL_GITHUB_AWS_ROLE_NAME }}
+        aws-region: ${{ inputs.region }}
+        aws-access-key-id: ${{ secrets.AL_GITHUB_AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AL_GITHUB_AWS_SECRET_ACCESS_KEY }}
+        role-external-id: ${{ inputs.externalRoleId }}
+        role-duration-seconds: 1200
+
+    - name: Install AWS CDK
+      run: npm install -g aws-cdk
+      
+    - name: CDK Synth
+      run: cdk synth
+    
+    - name: CDK Deploy
+      run: cdk deploy
