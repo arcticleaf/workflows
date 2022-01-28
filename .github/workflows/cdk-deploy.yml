@@ -14,12 +14,15 @@ on:
         required: true
         description: 'External role id of the role being used in the account being deployed into'
         type: string
+      roleName:
+        required: true
+        description: 'The role name used by GitHub to deploy'
+        type: string
+        default: 'arcticleaf'
     secrets:
       AL_GITHUB_AWS_ACCESS_KEY_ID:
         required: true
       AL_GITHUB_AWS_SECRET_ACCESS_KEY:
-        required: true
-      AL_GITHUB_AWS_ROLE_NAME:
         required: true
 jobs:
   reusable_cdk_deploy:
@@ -39,7 +42,7 @@ jobs:
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
-        role-to-assume: arn:aws:iam::${{ inputs.accountId }}:role/${{ secrets.AL_GITHUB_AWS_ROLE_NAME }}
+        role-to-assume: arn:aws:iam::${{ inputs.accountId }}:role/${{ inputs.roleName }}
         aws-region: ${{ inputs.region }}
         aws-access-key-id: ${{ secrets.AL_GITHUB_AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AL_GITHUB_AWS_SECRET_ACCESS_KEY }}
