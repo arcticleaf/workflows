@@ -1,0 +1,26 @@
+on:
+  workflow_call:
+    inputs:
+      themeName:
+        required: true
+        description: 'The theme folder to deploy into'
+        type: string
+    secrets:
+      HUBSPOT_PORTAL_ID:
+        required: true
+      HUBSPOT_PERSONAL_ACCESS_KEY:
+        required: true
+jobs:
+  reusable_hubspot_deploy:
+    name: Deploy HubSpot CMS
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.3.3
+      - name: HubSpot Deploy Action
+        uses: HubSpot/hubspot-cms-deploy-action@v1.5
+        with:
+          src_dir: ./
+          dest_dir: ${{ inputs.themeName }}
+          portal_id: ${{ secrets.HUBSPOT_PORTAL_ID }}
+          personal_access_key: ${{ secrets.HUBSPOT_PERSONAL_ACCESS_KEY }}
