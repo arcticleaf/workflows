@@ -30,7 +30,7 @@ jobs:
       image: ghcr.io/arcticleaf/shippy-buildenv-ecomm:latest
       credentials:
         username: ${{ github.actor }}
-        password: ${{ secrets.ghcr_token }}
+        password: ${{ secrets.GHCR_TOKEN }}
     environment: ${{ github.ref_name }}
     steps:
     - name: Checkout Code
