@@ -11,18 +11,72 @@ on:
         description: 'The role name used by GitHub to deploy'
         type: string
         default: 'arcticleaf'
-      packageZip:
-        required: true
-        description: 'The name of the zip'
-        type: string
-        default: '$GITHUB_SHA'
     secrets:
       AL_GITHUB_AWS_ACCESS_KEY_ID:
         required: true
       AL_GITHUB_AWS_SECRET_ACCESS_KEY:
         required: true
+env:
+  S3_BUCKET: 'deploy.shippy.${{ input.region }}'
+  S3_KEY: ${{ github.repository }}/${{ github.ref_name }}/${{ github.sha }}.zip
+
 jobs:
   reusable_shippy_deploy:
-    name: Deploy Big Commerce to Shippy
+    name: Shippy Deploy
     runs-on: ghcr.io/arcticleaf/shippy-buildenv-ecomm:latest
-    
+    environment: ${{ github.ref_name }}
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v2
+
+    - name: Run shippy script
+      run: |
+        if [ ${{ github.ref_name }} == 'production' ]
+        then
+          /shippy/exec/shippy.js bigcommerce production
+        elif [ ${{ github.ref_name }} == 'staging' ]
+        then
+          /shippy/exec/shippy.js bigcommerce staging
+        elif [ ${{ github.ref_name }} == /^feature\/.*$/ ]
+        then
+          /shippy/exec/shippy.js bigcommerce feature
+        fi
+
+    - name: Package S3
+      run: |
+        echo Creating ${{ github.sha }}.zip of $(pwd) ...
+        zip -q -r ${{ github.sha }}.zip .
+
+    - name: Deploy S3
+      run: |
+        /shippy/scripts/aws-setup.sh
+        echo "Copy ${{ github.sha }}.zip --> s3://$S3_BUCKET/$S3_KEY"
+        aws s3 cp ${{ github.sha }}.zip s3://$S3_BUCKET/$S3_KEY
+        echo Tagging package...
+        S3_TAGSET="TagSet=[
+              {Key=github:REPOSITORY,Value=${{ github.repository }}},
+              {Key=github:REF_NAME,Value=${{ github.ref_name }}},
+              {Key=github:SHA,Value=${{ github.sha }}},
+              {Key=github:JOB,Value=${{ github.job	}}},
+              {Key=github:RUN,Value=${{ github.run_id	}}},
+              {Key=github:ACTOR,Value=${{ github.actor }}}
+            ]"
+        aws s3api put-object-tagging
+          --bucket $S3_BUCKET
+          --key "$S3_KEY"
+          --tagging "$S3_TAGSET"
+
+    - name: Stop theme
+      run: bash /shippy/scripts/shippy-stop-theme.sh || echo "Failed trying to stop the Theme ... proceed anyway..."
+
+    - name: Warm theme
+      run: bash /shippy/scripts/shippy-warmup.sh
+
+    - name: Archive artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: ${{ github.sha }}-artifacts
+        path: |
+          dist/
+          ${{ github.sha }}.zip
+          Theme.json
