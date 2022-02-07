@@ -52,6 +52,13 @@ jobs:
         zip -q -r ${{ github.sha }}.zip .
 
     - name: Deploy S3
+      env:
+        S3_BUCKET: 'deploy.shippy.${{ inputs.region }}'
+        S3_KEY: ${{ github.repository }}/${{ github.ref_name }}/${{ github.sha }}.zip
+        GITLAB_AWS_ACCESS_KEY_ID: ${{ secrets.AL_GITHUB_AWS_ACCESS_KEY_ID }}
+        GITLAB_AWS_SECRET_ACCESS_KEY: ${{ secrets.AL_GITHUB_AWS_SECRET_ACCESS_KEY }}
+        AWS_PROFILE: ${{ inputs.profile }}
+        AWS_REGION: ${{ inputs.region }}
       run: |
         /shippy/scripts/aws-setup.sh
         echo "Copy ${{ github.sha }}.zip --> s3://$S3_BUCKET/$S3_KEY"
