@@ -23,7 +23,12 @@ env:
 jobs:
   reusable_shippy_deploy:
     name: Shippy Deploy
-    runs-on: ghcr.io/arcticleaf/shippy-buildenv-ecomm:latest
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/arcticleaf/shippy-buildenv-ecomm:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.ghcr_token }}
     environment: ${{ github.ref_name }}
     steps:
     - name: Checkout Code
