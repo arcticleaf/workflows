@@ -6,9 +6,18 @@ on:
         description: 'Region of the account to deploy into'
         type: string
         default: 'us-east-1'
+      profile:
+        required: false
+        description: 'Region of the account to deploy into'
+        type: string
+        default: 'gitlab'
 env:
   S3_BUCKET: 'deploy.shippy.${{ inputs.region }}'
   S3_KEY: ${{ github.repository }}/${{ github.ref_name }}/${{ github.sha }}.zip
+  GITLAB_AWS_ACCESS_KEY_ID: ${{ secrets.AL_GITHUB_AWS_ACCESS_KEY_ID }}
+  GITLAB_AWS_SECRET_ACCESS_KEY: ${{ secrets.AL_GITHUB_AWS_SECRET_ACCESS_KEY }}
+  AWS_PROFILE: ${{ inputs.profile }}
+  AWS_REGION: ${{ inputs.region }}
 
 jobs:
   reusable_shippy_deploy:
