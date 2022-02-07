@@ -11,13 +11,6 @@ on:
         description: 'Region of the account to deploy into'
         type: string
         default: 'gitlab'
-env:
-  S3_BUCKET: 'deploy.shippy.${{ inputs.region }}'
-  S3_KEY: ${{ github.repository }}/${{ github.ref_name }}/${{ github.sha }}.zip
-  GITLAB_AWS_ACCESS_KEY_ID: ${{ secrets.AL_GITHUB_AWS_ACCESS_KEY_ID }}
-  GITLAB_AWS_SECRET_ACCESS_KEY: ${{ secrets.AL_GITHUB_AWS_SECRET_ACCESS_KEY }}
-  AWS_PROFILE: ${{ inputs.profile }}
-  AWS_REGION: ${{ inputs.region }}
 
 jobs:
   reusable_shippy_deploy:
@@ -28,6 +21,13 @@ jobs:
       credentials:
         username: ${{ github.actor }}
         password: ${{ github.token }}
+      env:
+        S3_BUCKET: 'deploy.shippy.${{ inputs.region }}'
+        S3_KEY: ${{ github.repository }}/${{ github.ref_name }}/${{ github.sha }}.zip
+        GITLAB_AWS_ACCESS_KEY_ID: ${{ secrets.AL_GITHUB_AWS_ACCESS_KEY_ID }}
+        GITLAB_AWS_SECRET_ACCESS_KEY: ${{ secrets.AL_GITHUB_AWS_SECRET_ACCESS_KEY }}
+        AWS_PROFILE: ${{ inputs.profile }}
+        AWS_REGION: ${{ inputs.region }}
     environment: ${{ github.ref_name }}
     steps:
     - name: Checkout Code
@@ -35,13 +35,13 @@ jobs:
 
     - name: Run shippy script
       run: |
-        if [ ${{ github.ref_name }} == 'production' ]
+        if [ '${{ github.ref_name }}' == 'production' ]
         then
           /shippy/exec/shippy.js bigcommerce production
-        elif [ ${{ github.ref_name }} == 'staging' ]
+        elif [ '${{ github.ref_name }}' == 'staging' ]
         then
           /shippy/exec/shippy.js bigcommerce staging
-        elif [ ${{ github.ref_name }} == /^feature\/.*$/ ]
+        elif [ '${{ github.ref_name }}' == /^feature\/.*$/ ]
         then
           /shippy/exec/shippy.js bigcommerce feature
         fi
