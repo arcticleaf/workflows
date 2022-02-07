@@ -55,7 +55,6 @@ jobs:
       run: |
         echo Creating ${{ github.sha }}.zip of $(pwd) ...
         zip -q -r ${{ github.sha }}.zip .
-        echo $GITLAB_AWS_ACCESS_KEY_ID
 
     - name: Deploy S3
       run: |
@@ -71,10 +70,7 @@ jobs:
               {Key=github:RUN,Value=${{ github.run_id	}}},
               {Key=github:ACTOR,Value=${{ github.actor }}}
             ]"
-        aws s3api put-object-tagging
-          --bucket $S3_BUCKET
-          --key "$S3_KEY"
-          --tagging "$S3_TAGSET"
+        aws s3api put-object-tagging --bucket $S3_BUCKET --key "$S3_KEY" --tagging "$S3_TAGSET"
 
     - name: Stop theme
       run: bash /shippy/scripts/shippy-stop-theme.sh || echo "Failed trying to stop the Theme ... proceed anyway..."
