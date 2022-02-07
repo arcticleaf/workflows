@@ -16,6 +16,8 @@ on:
         required: true
       AL_GITHUB_AWS_SECRET_ACCESS_KEY:
         required: true
+      GHCR_TOKEN:
+        required: true
 env:
   S3_BUCKET: 'deploy.shippy.${{ inputs.region }}'
   S3_KEY: ${{ github.repository }}/${{ github.ref_name }}/${{ github.sha }}.zip
