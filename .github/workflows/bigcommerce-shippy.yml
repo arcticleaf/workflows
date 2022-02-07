@@ -1,0 +1,28 @@
+on:
+  workflow_call:
+    inputs:
+      region:
+        required: false
+        description: 'Region of the account to deploy into'
+        type: string
+        default: 'us-east-1'
+      roleName:
+        required: true
+        description: 'The role name used by GitHub to deploy'
+        type: string
+        default: 'arcticleaf'
+      packageZip:
+        required: true
+        description: 'The name of the zip'
+        type: string
+        default: '$GITHUB_SHA'
+    secrets:
+      AL_GITHUB_AWS_ACCESS_KEY_ID:
+        required: true
+      AL_GITHUB_AWS_SECRET_ACCESS_KEY:
+        required: true
+jobs:
+  reusable_shippy_deploy:
+    name: Deploy Big Commerce to Shippy
+    runs-on: ghcr.io/arcticleaf/shippy-buildenv-ecomm:latest
+    
