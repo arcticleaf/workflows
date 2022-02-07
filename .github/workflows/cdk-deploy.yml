@@ -28,7 +28,6 @@ jobs:
   reusable_cdk_deploy:
     name: Deploy CDK to AWS account
     runs-on: ubuntu-latest
-    environment: production
     steps:
     - name: Checkout Code
       uses: actions/checkout@v2
