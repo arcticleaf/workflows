@@ -6,18 +6,6 @@ on:
         description: 'Region of the account to deploy into'
         type: string
         default: 'us-east-1'
-      roleName:
-        required: true
-        description: 'The role name used by GitHub to deploy'
-        type: string
-        default: 'arcticleaf'
-    secrets:
-      AL_GITHUB_AWS_ACCESS_KEY_ID:
-        required: true
-      AL_GITHUB_AWS_SECRET_ACCESS_KEY:
-        required: true
-      GHCR_TOKEN:
-        required: true
 env:
   S3_BUCKET: 'deploy.shippy.${{ inputs.region }}'
   S3_KEY: ${{ github.repository }}/${{ github.ref_name }}/${{ github.sha }}.zip
@@ -30,7 +18,7 @@ jobs:
       image: ghcr.io/arcticleaf/shippy-buildenv-ecomm:latest
       credentials:
         username: ${{ github.actor }}
-        password: ${{ secrets.GHCR_TOKEN }}
+        password: ${{ github.token }}
     environment: ${{ github.ref_name }}
     steps:
     - name: Checkout Code
