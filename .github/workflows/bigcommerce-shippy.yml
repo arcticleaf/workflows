@@ -11,6 +11,11 @@ on:
         description: 'Region of the account to deploy into'
         type: string
         default: 'gitlab'
+    secrets:
+      AL_GITHUB_AWS_ACCESS_KEY_ID:
+        required: true
+      AL_GITHUB_AWS_SECRET_ACCESS_KEY:
+        required: true
 
 jobs:
   reusable_shippy_deploy:
