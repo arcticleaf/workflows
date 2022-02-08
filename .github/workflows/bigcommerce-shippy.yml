@@ -42,12 +42,15 @@ jobs:
       run: |
         if [ '${{ github.ref_name }}' == 'production' ]
         then
+          echo "Running production shippy build"
           /shippy/exec/shippy.js bigcommerce production
         elif [ '${{ github.ref_name }}' == 'staging' ]
         then
+          echo "Running staging shippy build"
           /shippy/exec/shippy.js bigcommerce staging
         elif [ '${{ github.ref_name }}' == /^feature\/.*$/ ]
         then
+          echo "Running feature shippy build"
           /shippy/exec/shippy.js bigcommerce feature
         fi
 
