@@ -40,7 +40,7 @@ jobs:
 
     - name: Run shippy script
       run: |
-        if [ '${{ github.ref_name }}' == 'production' ]
+        ( if [ '${{ github.ref_name }}' == 'production' ]
         then
           echo "Running production shippy build"
           /shippy/exec/shippy.js bigcommerce production
@@ -52,7 +52,7 @@ jobs:
         then
           echo "Running feature shippy build"
           /shippy/exec/shippy.js bigcommerce feature
-        fi
+        fi )
 
     - name: Package S3
       run: |
