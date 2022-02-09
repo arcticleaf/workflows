@@ -45,6 +45,7 @@ jobs:
       with:
         node-version-file: '.nvmrc'
     - run: npm install
+    - run: npm run build
     
     - name: Add Stencil Access Key
       run: 'echo "{ \"accessToken\": \"${{ secrets.STENCIL_ACCESS_TOKEN }}\" }" > secrets.stencil.json'
