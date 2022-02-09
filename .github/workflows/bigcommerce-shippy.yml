@@ -36,10 +36,14 @@ jobs:
         AWS_PROFILE: ${{ inputs.profile }}
         AWS_REGION: ${{ inputs.region }}
         CI_COMMIT_SHA: ${{ github.sha }}
+        CI_COMMIT_SHORT_SHA: ${{ github.sha }}
         CI_COMMIT_REF_NAME: ${{ github.ref_name }}
         CI_JOB_URL: ${{ github.run_id }}
         CI_PIPELINE_URL: ${{ github.server_url }}
         CI_PROJECT_URL: ${{ github.repository }}
+        CI_PROJECT_PATH: ${{ github.repository }}
+        CI_PIPELINE_ID: ${{ github.run_id }}
+        CI_JOB_ID: ${{ github.job }}
         REPOSITORY_URI: ${{ github.repositoryUrl }}
     environment: ${{ github.ref_name }}
     steps:
