@@ -61,7 +61,7 @@ jobs:
       run: 'echo "{ \"accessToken\": \"${{ secrets.STENCIL_ACCESS_TOKEN }}\" }" > secrets.stencil.json'
 
     - name: Run shippy script
-      run: if [ "${{ github.ref_name }}" = "production" ]; then /shippy/exec/shippy.js bigcommerce production; elif [ "${{ github.ref_name }}" = "staging" ]; then /shippy/exec/shippy.js bigcommerce staging; elif [[ "${{ github.ref_name }}" =~ ^feature\/.*$ ]]; then /shippy/exec/shippy.js bigcommerce feature; fi
+      run: if [ "${{ github.ref_name }}" = "production" ]; then /shippy/exec/shippy.js bigcommerce production; elif [ "${{ github.ref_name }}" = "staging" ]; then /shippy/exec/shippy.js bigcommerce staging; elif "${{ github.ref_name }}" | grep -Eq '^feature\/.*$'; then /shippy/exec/shippy.js bigcommerce feature; fi
 
     - name: Package S3
       run: |
