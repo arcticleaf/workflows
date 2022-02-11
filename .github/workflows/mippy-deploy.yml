@@ -1,0 +1,7 @@
+on:
+  workflow_call:
+
+jobs:
+  reusable_mippy_deploy:
+    name: Mippy Deploy
+    runs-on: ubuntu-latest
