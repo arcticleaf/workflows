@@ -1,5 +1,16 @@
 on:
   workflow_call:
+    secrets:
+      MIVA_API_TOKEN:
+        required: true
+      MIVA_API_ENDPOINT:
+        required: true
+      FTP_USER:
+        required: true
+      FTP_HOST:
+        required: true
+      FTP_PASSWORD:
+        required: true
 
 jobs:
   reusable_mippy_deploy:
