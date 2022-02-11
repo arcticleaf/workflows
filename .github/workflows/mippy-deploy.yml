@@ -16,3 +16,25 @@ jobs:
   reusable_mippy_deploy:
     name: Mippy Deploy
     runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Theme Code
+      uses: actions/checkout@v2
+
+    - name: Install Node & Dependencies (theme)
+      uses: actions/setup-node@v2
+      with:
+        node-version-file: '.nvmrc'
+    - run: npm install
+    - run: npm run build
+
+    - name: Checkout Mippy Code
+      uses: actions/checkout@v2
+      with:
+        repository: 'https://github.com/arcticleaf/mippy-miva-devops.git'
+
+    - name: Install Node & Dependencies (mippy)
+      uses: actions/setup-node@v2
+      with:
+        node-version-file: '.nvmrc'
+    - run: npm install
+    - run: npm run build
