@@ -21,6 +21,7 @@ on:
         required: true
         type: string
         description: 'Target branch name'
+        default: ''
     secrets:
       MIVA_API_TOKEN:
         required: true
