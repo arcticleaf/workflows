@@ -52,7 +52,7 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v2
 
-    - run: echo '{"uuid":"5b5715c4-f5d1-40a0-9039-826f9ef3b77e","email":"fake@shopifysucks.com","tracking":false,"trackingVersion":1}' > .slaterc
+    - run: echo '{"uuid":"5b5715c4-f5d1-40a0-9039-826f9ef3b77e","email":"fake@shopifysucks.com","tracking":false,"trackingVersion":1}' > ~/.slaterc
     - run: npm config set strict-ssl ${{ inputs.strictSSL }}
     - run: npm ci
 
