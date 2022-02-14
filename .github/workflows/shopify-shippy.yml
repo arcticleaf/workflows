@@ -1,0 +1,76 @@
+on:
+  workflow_call:
+    inputs:
+      region:
+        required: false
+        description: 'Region of the account to deploy into'
+        type: string
+        default: 'us-east-1'
+      profile:
+        required: false
+        description: 'Region of the account to deploy into'
+        type: string
+        default: 'gitlab'
+    secrets:
+      AL_GITHUB_AWS_ACCESS_KEY_ID:
+        required: true
+      AL_GITHUB_AWS_SECRET_ACCESS_KEY:
+        required: true
+      STENCIL_ACCESS_TOKEN:
+        required: true
+
+jobs:
+  reusable_shippy_deploy:
+    name: Shippy Deploy
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/arcticleaf/shippy-buildenv-ecomm:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ github.token }}
+      env:
+        S3_BUCKET: 'deploy.shippy.${{ inputs.region }}'
+        S3_KEY: ${{ github.repository }}/${{ github.ref_name }}/${{ github.sha }}.zip
+        GITLAB_AWS_ACCESS_KEY_ID: ${{ secrets.AL_GITHUB_AWS_ACCESS_KEY_ID }}
+        GITLAB_AWS_SECRET_ACCESS_KEY: ${{ secrets.AL_GITHUB_AWS_SECRET_ACCESS_KEY }}
+        AWS_PROFILE: ${{ inputs.profile }}
+        AWS_REGION: ${{ inputs.region }}
+        CI_COMMIT_SHA: ${{ github.sha }}
+        CI_COMMIT_SHORT_SHA: ${{ github.sha }}
+        CI_COMMIT_REF_NAME: ${{ github.ref_name }}
+        CI_JOB_URL: ${{ github.run_id }}
+        CI_PIPELINE_URL: ${{ github.server_url }}
+        CI_PROJECT_URL: ${{ github.repository }}
+        CI_PROJECT_PATH: ${{ github.repository }}
+        CI_PIPELINE_ID: ${{ github.run_id }}
+        CI_JOB_ID: ${{ github.job }}
+        REPOSITORY_URI: ${{ github.repositoryUrl }}
+    environment: ${{ github.ref_name }}
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v2
+    
+    - name: Install Node & Dependencies
+      uses: actions/setup-node@v2
+      with:
+        node-version-file: '.nvmrc'
+    - run: npm install
+
+    - name: Run shippy script
+      run: if [ "${{ github.ref_name }}" = "production" ]; then /shippy/exec/shippy.js shopify production; elif [ "${{ github.ref_name }}" = "staging" ]; then /shippy/exec/shippy.js shopify staging; elif echo "${{ github.ref_name }}" | grep -Eq '^feature\/.*$'; then /shippy/exec/shippy.js shopify feature; fi
+
+    - name: Stop theme
+      run: bash /shippy/scripts/shippy-stop-theme.sh || echo "Failed trying to stop the Theme ... proceed anyway..."
+
+    - name: Warm theme
+      run: bash /shippy/scripts/shippy-warmup.sh
+
+    - name: Archive artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: ${{ github.sha }}-artifacts
+        path: |
+          upload/
+          settings-backup/
+          dist/
+
