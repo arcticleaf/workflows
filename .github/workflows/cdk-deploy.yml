@@ -52,6 +52,9 @@ jobs:
         role-external-id: ${{ inputs.externalRoleId }}
         role-duration-seconds: 1200
         role-skip-session-tagging: true
+    
+    - name: Build project
+      run: npm run build
       
     - name: CDK Synth
       run: cdk synth
