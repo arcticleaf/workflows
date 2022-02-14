@@ -16,8 +16,6 @@ on:
         required: true
       AL_GITHUB_AWS_SECRET_ACCESS_KEY:
         required: true
-      STENCIL_ACCESS_TOKEN:
-        required: true
 
 jobs:
   reusable_shippy_deploy:
