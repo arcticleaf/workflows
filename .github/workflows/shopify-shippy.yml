@@ -56,7 +56,7 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version-file: '.nvmrc'
-    - run: npm config set strict-ssl ${inputs.strictSSL}
+    - run: npm config set strict-ssl ${{ inputs.strictSSL }}
     - run: npm install
 
     - name: Run shippy script
