@@ -57,6 +57,7 @@ jobs:
       with:
         node-version-file: '.nvmrc'
     - run: npm config set strict-ssl ${{ inputs.strictSSL }}
+    - run: npm install imagemin-pngquant@5.0.1 --save
     - run: npm install
 
     - name: Run shippy script
