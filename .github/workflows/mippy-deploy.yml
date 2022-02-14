@@ -13,6 +13,14 @@ on:
         required: true
         type: string
         description: 'FTP username'
+      source_branch:
+        required: true
+        type: string
+        description: 'Source branch name'
+      target_branch:
+        required: true
+        type: string
+        description: 'Target branch name'
     secrets:
       MIVA_API_TOKEN:
         required: true
@@ -46,7 +54,7 @@ jobs:
           cd mippy-miva-devops
           npm install
           npm run build
-          ls -a
+          echo "source branch ${{ inputs.source_branch }}, target branch ${{ inputs.target_branch }}"
 
       - name: Mippy Deploy
         run: |
