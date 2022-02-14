@@ -14,9 +14,10 @@ on:
         type: string
         description: 'FTP username'
       source_branch:
-        required: true
+        required: false
         type: string
         description: 'Source branch name'
+        default: ''
       target_branch:
         required: false
         type: string
