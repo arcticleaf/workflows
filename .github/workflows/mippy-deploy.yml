@@ -1,15 +1,28 @@
 on:
   workflow_call:
+    inputs:
+      miva_api_endpoint:
+        required: true
+        type: string
+        description: 'Miva JSON API Endpoint'
+      miva_store_code:
+        required: true
+        type: string
+        description: 'Miva store code'
+      ftp_user:
+        required: true
+        type: string
+        description: 'FTP username'
     secrets:
       MIVA_API_TOKEN:
         required: true
-      MIVA_API_ENDPOINT:
-        required: true
-      FTP_USER:
+      MIVA_SIGNING_KEY:
         required: true
       FTP_HOST:
         required: true
       FTP_PASSWORD:
+        required: true
+      ARCTICLEAF_PERSONAL_ACCESS_TOKEN:
         required: true
 
 jobs:
@@ -17,24 +30,24 @@ jobs:
     name: Mippy Deploy
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout Theme Code
-      uses: actions/checkout@v2
+      - name: Checkout Theme Code
+        uses: actions/checkout@v2
 
-    - name: Install Node & Dependencies (theme)
-      uses: actions/setup-node@v2
-      with:
-        node-version-file: '.nvmrc'
-    - run: npm install
-    - run: npm run build
+      - name: Install Node & Dependencies (theme)
+        uses: actions/setup-node@v2
+        with:
+          node-version-file: '.nvmrc'
+      - run: npm install
+      - run: npm run build
 
-    - name: Checkout Mippy Code
-      uses: actions/checkout@v2
-      with:
-        repository: 'https://github.com/arcticleaf/mippy-miva-devops.git'
+      - name: Checkout Mippy Code, npm install, and npm run build
+        run: |
+          git clone https://${{ secrets.ARCTICLEAF_PERSONAL_ACCESS_TOKEN }}@github.com/arcticleaf/mippy-miva-devops.git
+          cd mippy-miva-devops
+          npm install
+          npm run build
+          ls -a
 
-    - name: Install Node & Dependencies (mippy)
-      uses: actions/setup-node@v2
-      with:
-        node-version-file: '.nvmrc'
-    - run: npm install
-    - run: npm run build
+      - name: Mippy Deploy
+        run: |
+          node mippy-miva-devops/dist/mippy.js -s development -t staging -k ${{ secrets.MIVA_API_TOKEN }} -sk ${{ secrets.MIVA_SIGNING_KEY }} -c ${{ inputs.MIVA_STORE_CODE }} -e ${{ inputs.MIVA_API_ENDPOINT }} -h ${{ secrets.FTP_HOST }} -u ${{ inputs.FTP_USER }} -p ${{ secrets.FTP_PASSWORD }}
