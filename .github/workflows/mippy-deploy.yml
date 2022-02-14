@@ -47,7 +47,7 @@ jobs:
         with:
           node-version-file: '.nvmrc'
       - run: npm install
-      - run: npm run build
+      - run: gulp build --env ${{ inputs.target_branch }}
 
       - name: Checkout Mippy Code, npm install, and npm run build
         run: |
