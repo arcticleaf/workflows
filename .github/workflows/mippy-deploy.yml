@@ -22,8 +22,6 @@ on:
         required: true
       FTP_PASSWORD:
         required: true
-      ARCTICLEAF_PERSONAL_ACCESS_TOKEN:
-        required: true
 
 jobs:
   reusable_mippy_deploy:
