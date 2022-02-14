@@ -51,6 +51,8 @@ jobs:
     steps:
     - name: Checkout Code
       uses: actions/checkout@v2
+
+    - run: sudo apt install libpng-dev
     
     - name: Install Node & Dependencies
       uses: actions/setup-node@v2
