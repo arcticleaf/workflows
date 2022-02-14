@@ -11,6 +11,10 @@ on:
         description: 'Region of the account to deploy into'
         type: string
         default: 'gitlab'
+      strictSSL:
+        required: false
+        type: boolean
+        default: true
     secrets:
       AL_GITHUB_AWS_ACCESS_KEY_ID:
         required: true
@@ -52,6 +56,7 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version-file: '.nvmrc'
+    - run: npm config set strict-ssl ${inputs.strictSSL}
     - run: npm install
 
     - name: Run shippy script
