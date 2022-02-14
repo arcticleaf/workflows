@@ -39,6 +39,9 @@ jobs:
         node-version-file: '.nvmrc'
     - run: npm install
 
+    - name: Install AWS CDK
+      run: npm install -g aws-cdk
+
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -49,9 +52,6 @@ jobs:
         role-external-id: ${{ inputs.externalRoleId }}
         role-duration-seconds: 1200
         role-skip-session-tagging: true
-
-    - name: Install AWS CDK
-      run: npm install -g aws-cdk
       
     - name: CDK Synth
       run: cdk synth
