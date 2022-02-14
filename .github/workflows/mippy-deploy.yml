@@ -50,4 +50,4 @@ jobs:
 
       - name: Mippy Deploy
         run: |
-          node mippy-miva-devops/dist/mippy.js -s development -t staging -k ${{ secrets.MIVA_API_TOKEN }} -sk ${{ secrets.MIVA_SIGNING_KEY }} -c ${{ inputs.MIVA_STORE_CODE }} -e ${{ inputs.MIVA_API_ENDPOINT }} -h ${{ secrets.FTP_HOST }} -u ${{ inputs.FTP_USER }} -p ${{ secrets.FTP_PASSWORD }}
+          node mippy-miva-devops/dist/mippy.js -s development -t staging -k ${{ secrets.MIVA_API_TOKEN }} -sk ${{ secrets.MIVA_SIGNING_KEY }} -c ${{ inputs.miva_store_code }} -e ${{ inputs.miva_api_endpoint }} -h ${{ secrets.FTP_HOST }} -u ${{ inputs.ftp_user }} -p ${{ secrets.FTP_PASSWORD }}
