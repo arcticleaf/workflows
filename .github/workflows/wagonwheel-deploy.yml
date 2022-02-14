@@ -1,0 +1,36 @@
+on:
+  workflow_call:
+    inputs:
+      destination:
+        required: true
+        description: 'The theme folder to deploy into'
+        type: string
+      root:
+        required: true
+        type: string
+      dev:
+        default: false
+        required: false
+        type: boolean
+    secrets:
+      HUBSPOT_PORTAL_ID:
+        required: true
+      HUBSPOT_PERSONAL_ACCESS_KEY:
+        required: true
+jobs:
+  reusable_hubspot_deploy:
+    name: Deploy HubSpot CMS
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.3.3
+      - name: Add Config
+        run: 'echo "{ \"dev\": \"${{ inputs.dev }}\", \"id\": \"${{ secrets.HUBSPOT_PORTAL_ID }}\", \"apiKey\": \"${{ secrets.HUBSPOT_PERSONAL_ACCESS_KEY }}\", \"destination\": \"${{ inputs.destination }}\", \"root\": \"${{ inputs.root }}\" }" > .wagonwheel.hubspot.json'
+      - name: Run WagonWheel
+        run: npm run build -- build assets
+      - name: Archive artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ github.sha }}-artifacts
+          path: |
+            dist
