@@ -57,12 +57,11 @@ jobs:
           npm run build
           echo "source branch ${{ inputs.source_branch }}, target branch ${{ inputs.target_branch }}"
 
-      - name: Mippy FTP Upload and Changeset merge
+      - name: Mippy Changeset merge
         if: "${{ inputs.source_branch != ''}}"
         run: |
-          node mippy-miva-devops/dist/mippy.js -s ${{ inputs.source_branch }} -t ${{ inputs.target_branch }} -k ${{ secrets.MIVA_API_TOKEN }} -sk ${{ secrets.MIVA_SIGNING_KEY }} -c ${{ inputs.miva_store_code }} -e ${{ inputs.miva_api_endpoint }} -h ${{ secrets.FTP_HOST }} -u ${{ inputs.ftp_user }} -p ${{ secrets.FTP_PASSWORD }}
+          node mippy-miva-devops/dist/mippy.js changesetMerge -s ${{ inputs.source_branch }} -t ${{ inputs.target_branch }} -k ${{ secrets.MIVA_API_TOKEN }} -sk ${{ secrets.MIVA_SIGNING_KEY }} -c ${{ inputs.miva_store_code }} -e ${{ inputs.miva_api_endpoint }} -h ${{ secrets.FTP_HOST }} -u ${{ inputs.ftp_user }} -p ${{ secrets.FTP_PASSWORD }}
 
-      - name: Mippy FTP Upload
-        if: "${{ inputs.source_branch == ''}}"
+      - name: Mippy FTP Deploy
         run: |
-          node mippy-miva-devops/dist/mippy.js -t ${{ inputs.target_branch }} -k ${{ secrets.MIVA_API_TOKEN }} -sk ${{ secrets.MIVA_SIGNING_KEY }} -c ${{ inputs.miva_store_code }} -e ${{ inputs.miva_api_endpoint }} -h ${{ secrets.FTP_HOST }} -u ${{ inputs.ftp_user }} -p ${{ secrets.FTP_PASSWORD }}
+          node mippy-miva-devops/dist/mippy.js ftpDeploy -t ${{ inputs.target_branch }} -k ${{ secrets.MIVA_API_TOKEN }} -sk ${{ secrets.MIVA_SIGNING_KEY }} -c ${{ inputs.miva_store_code }} -e ${{ inputs.miva_api_endpoint }} -h ${{ secrets.FTP_HOST }} -u ${{ inputs.ftp_user }} -p ${{ secrets.FTP_PASSWORD }}
