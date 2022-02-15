@@ -51,13 +51,11 @@ jobs:
     steps:
     - name: Checkout Code
       uses: actions/checkout@v2
-    
-    - name: Install Node & Dependencies
-      uses: actions/setup-node@v2
-      with:
-        node-version-file: '.nvmrc'
+      
+    # This prevents Shopify analytics from blocking slate script from running
+    - run: echo '{"uuid":"5b5715c4-f5d1-40a0-9039-826f9ef3b77e","email":"fake@shopifysucks.com","tracking":false,"trackingVersion":1}' > ~/.slaterc
     - run: npm config set strict-ssl ${{ inputs.strictSSL }}
-    - run: npm install
+    - run: npm ci
 
     - name: Run shippy script
       run: if [ "${{ github.ref_name }}" = "production" ]; then /shippy/exec/shippy.js shopify production; elif [ "${{ github.ref_name }}" = "staging" ]; then /shippy/exec/shippy.js shopify staging; elif echo "${{ github.ref_name }}" | grep -Eq '^feature\/.*$'; then /shippy/exec/shippy.js shopify feature; fi

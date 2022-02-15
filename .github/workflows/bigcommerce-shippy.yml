@@ -49,12 +49,7 @@ jobs:
     steps:
     - name: Checkout Code
       uses: actions/checkout@v2
-    
-    - name: Install Node & Dependencies
-      uses: actions/setup-node@v2
-      with:
-        node-version-file: '.nvmrc'
-    - run: npm install
+    - run: npm ci
     - run: npm run build
     
     - name: Add Stencil Access Key
