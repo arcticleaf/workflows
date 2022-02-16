@@ -51,10 +51,11 @@ jobs:
     steps:
     - name: Checkout Code
       uses: actions/checkout@v2
-      
+    
     # This prevents Shopify analytics from blocking slate script from running
     - run: echo '{"uuid":"5b5715c4-f5d1-40a0-9039-826f9ef3b77e","email":"fake@shopifysucks.com","tracking":false,"trackingVersion":1}' > ~/.slaterc
     - run: npm config set strict-ssl ${{ inputs.strictSSL }}
+    - run: pwd
     - run: npm ci
 
     - name: Run shippy script
