@@ -56,7 +56,7 @@ jobs:
     - run: echo '{"uuid":"5b5715c4-f5d1-40a0-9039-826f9ef3b77e","email":"fake@shopifysucks.com","tracking":false,"trackingVersion":1}' > ~/.slaterc
     - run: npm config set strict-ssl ${{ inputs.strictSSL }}
     - run: npm ci
-    - run: pwd && ls
+    - run: cd ./src
     - name: Run shippy script
       run: if [ "${{ github.ref_name }}" = "production" ]; then /shippy/exec/shippy.js shopify production; elif [ "${{ github.ref_name }}" = "staging" ]; then /shippy/exec/shippy.js shopify staging; elif echo "${{ github.ref_name }}" | grep -Eq '^feature\/.*$'; then /shippy/exec/shippy.js shopify feature; fi
 
