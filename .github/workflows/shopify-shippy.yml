@@ -52,7 +52,13 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v2
       
-    - run: cat .env
+    - name: Import environment variables from a file
+      id: import-env
+      shell: bash
+      run: |
+        while read line; do
+          echo "$line" >> $GITHUB_ENV
+        done < .env
       
     # This prevents Shopify analytics from blocking slate script from running
     - run: echo '{"uuid":"5b5715c4-f5d1-40a0-9039-826f9ef3b77e","email":"fake@shopifysucks.com","tracking":false,"trackingVersion":1}' > ~/.slaterc
