@@ -58,7 +58,7 @@ jobs:
     - run: npm ci
     - run: cat ./src/config/settings_schema.json
     - name: Run shippy script
-      run: if [ "${{ github.ref_name }}" = "production" ]; then /shippy/exec/shippy.js shopify production; elif [ "${{ github.ref_name }}" = "staging" ]; then /shippy/exec/shippy.js shopify staging; elif echo "${{ github.ref_name }}" | grep -Eq '^feature\/.*$'; then /shippy/exec/shippy.js shopify feature; fi
+      run: if [ "${{ github.ref_name }}" = "production" ]; then echo "running prod" && /shippy/exec/shippy.js shopify production; elif [ "${{ github.ref_name }}" = "staging" ]; then echo "running stage" && /shippy/exec/shippy.js shopify staging; elif echo "${{ github.ref_name }}" | grep -Eq '^feature\/.*$'; then echo "running feature" && /shippy/exec/shippy.js shopify feature; fi
 
     - name: Stop theme
       run: bash /shippy/scripts/shippy-stop-theme.sh || echo "Failed trying to stop the Theme ... proceed anyway..."
