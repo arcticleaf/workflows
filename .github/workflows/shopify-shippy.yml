@@ -68,6 +68,7 @@ jobs:
       run: |
         echo "SHIPPY_SHOPIFY_API_KEY=${{ secrets.SHIPPY_SHOPIFY_API_KEY }}" >> .env
         echo "SHIPPY_SHOPIFY_API_KEY=${{ secrets.SHIPPY_SHOPIFY_API_KEY }}" >> .env
+        cat .env
     
     - name: Run shippy script
       run: if [ "${{ github.ref_name }}" = "production" ]; then /shippy/exec/shippy.js shopify production; elif [ "${{ github.ref_name }}" = "staging" ]; then /shippy/exec/shippy.js shopify staging; elif echo "${{ github.ref_name }}" | grep -Eq '^feature\/.*$'; then /shippy/exec/shippy.js shopify feature; fi
