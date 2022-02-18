@@ -76,9 +76,6 @@ jobs:
     - name: Stop theme
       run: bash /shippy/scripts/shippy-stop-theme.sh || echo "Failed trying to stop the Theme ... proceed anyway..."
 
-    - name: Warm theme
-      run: bash /shippy/scripts/shippy-warmup.sh
-
     - name: Archive artifacts
       uses: actions/upload-artifact@v2
       with:
