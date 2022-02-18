@@ -20,6 +20,10 @@ on:
         required: true
       AL_GITHUB_AWS_SECRET_ACCESS_KEY:
         required: true
+      SHIPPY_SHOPIFY_API_KEY:
+        required: true
+      SLATE_PASSWORD:
+        required: true
 
 jobs:
   reusable_shippy_deploy:
@@ -47,6 +51,9 @@ jobs:
         CI_PIPELINE_ID: ${{ github.run_id }}
         CI_JOB_ID: ${{ github.job }}
         REPOSITORY_URI: ${{ github.repositoryUrl }}
+        SHIPPY_SHOPIFY_API_KEY: ${{ secrets.SHIPPY_SHOPIFY_API_KEY }}
+        SLATE_PASSWORD: ${{ secrets.SLATE_PASSWORD }}
+        
     environment: ${{ github.ref_name }}
     steps:
     - name: Checkout Code
@@ -56,7 +63,12 @@ jobs:
     - run: echo '{"uuid":"5b5715c4-f5d1-40a0-9039-826f9ef3b77e","email":"fake@shopifysucks.com","tracking":false,"trackingVersion":1}' > ~/.slaterc
     - run: npm config set strict-ssl ${{ inputs.strictSSL }}
     - run: npm ci
-    - run: cat ./src/config/settings_schema.json
+    
+    - name: Add keys to env file
+      run: |
+        echo "SHIPPY_SHOPIFY_API_KEY=${{ secrets.SHIPPY_SHOPIFY_API_KEY }}" >> .env
+        echo "SHIPPY_SHOPIFY_API_KEY=${{ secrets.SHIPPY_SHOPIFY_API_KEY }}" >> .env
+    
     - name: Run shippy script
       run: if [ "${{ github.ref_name }}" = "production" ]; then /shippy/exec/shippy.js shopify production; elif [ "${{ github.ref_name }}" = "staging" ]; then /shippy/exec/shippy.js shopify staging; elif echo "${{ github.ref_name }}" | grep -Eq '^feature\/.*$'; then /shippy/exec/shippy.js shopify feature; fi
 
