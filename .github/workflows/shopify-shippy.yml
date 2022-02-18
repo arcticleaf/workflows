@@ -67,7 +67,7 @@ jobs:
     - name: Add keys to env file
       run: |
         echo "SHIPPY_SHOPIFY_API_KEY=${{ secrets.SHIPPY_SHOPIFY_API_KEY }}" >> .env
-        echo "SHIPPY_SHOPIFY_API_KEY=${{ secrets.SHIPPY_SHOPIFY_API_KEY }}" >> .env
+        echo "SLATE_PASSWORD=${{ secrets.SLATE_PASSWORD }}" >> .env
         cat .env
     
     - name: Run shippy script
