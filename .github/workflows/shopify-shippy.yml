@@ -64,7 +64,7 @@ jobs:
     - run: npm config set strict-ssl ${{ inputs.strictSSL }}
     
     - name: Install npm packages
-      if: always()
+      continue-on-error: true
       run: test -f ./package-lock.json && npm ci
     
     - name: Add keys to env file
