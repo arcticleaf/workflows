@@ -22,7 +22,7 @@ on:
       customScript:
         required: false
         type: string
-        default: ''
+        default: 'echo No custom script to run.'
     secrets:
       AL_GITHUB_AWS_ACCESS_KEY_ID:
         required: true
