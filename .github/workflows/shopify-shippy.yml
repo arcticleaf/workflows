@@ -19,6 +19,10 @@ on:
         required: false
         type: string
         default: ''
+      customScript:
+        required: false
+        type: string
+        default: ''
     secrets:
       AL_GITHUB_AWS_ACCESS_KEY_ID:
         required: true
@@ -76,6 +80,9 @@ jobs:
         echo "SHIPPY_SHOPIFY_API_KEY=${{ secrets.SHIPPY_SHOPIFY_API_KEY }}" >> .env
         echo "SLATE_PASSWORD=${{ secrets.SLATE_PASSWORD }}" >> .env
         cat .env
+    
+    - name: Run custom script
+      run: if [ "${{ inputs.customScript }}" != "" ]; then ${{ inputs.customScript }};
     
     - name: Run shippy script
       run: if [ "${{ github.ref_name }}" = "production" ]; then /shippy/exec/shippy.js shopify production; elif [ "${{ github.ref_name }}" = "staging" ]; then /shippy/exec/shippy.js shopify staging; elif echo "${{ github.ref_name }}" | grep -Eq '^feature\/.*$'; then /shippy/exec/shippy.js shopify feature; fi
