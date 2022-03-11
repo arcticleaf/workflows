@@ -82,6 +82,7 @@ jobs:
         cat .env
     
     - name: Run custom script
+      shell: bash
       run: if [ "${{ inputs.customScript }}" != "" ]; then ${{ inputs.customScript }}; fi
     
     - name: Run shippy script
