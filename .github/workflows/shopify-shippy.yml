@@ -78,10 +78,6 @@ jobs:
     - name: Install npm packages
       continue-on-error: true
       run: test -f ./package-lock.json && npm ci
-      
-    - name: Building
-      if: ${{ inputs.buildRequired }}
-      run: npm run build
     
     - name: Add keys to env file
       run: |
