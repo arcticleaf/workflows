@@ -23,6 +23,10 @@ on:
         required: false
         type: string
         default: 'echo No custom script to run.'
+      buildRequired:
+        required: false
+        type: boolean
+        default: false
     secrets:
       AL_GITHUB_AWS_ACCESS_KEY_ID:
         required: true
@@ -74,6 +78,10 @@ jobs:
     - name: Install npm packages
       continue-on-error: true
       run: test -f ./package-lock.json && npm ci
+      
+    - name: Building
+      if: ${{ inputs.buildRequired }}
+      run: npm run build
     
     - name: Add keys to env file
       run: |
