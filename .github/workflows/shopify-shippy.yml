@@ -83,7 +83,7 @@ jobs:
     
     - name: Run custom script
       shell: bash
-      run: if [ "${{ inputs.customScript }}" != "" ] then ${{ inputs.customScript }}; fi
+      run: if [ "${{ inputs.customScript }}" != "" ]; then ${{ inputs.customScript }}; fi
     
     - name: Run shippy script
       run: if [ "${{ github.ref_name }}" = "production" ]; then /shippy/exec/shippy.js shopify production; elif [ "${{ github.ref_name }}" = "staging" ]; then /shippy/exec/shippy.js shopify staging; elif echo "${{ github.ref_name }}" | grep -Eq '^feature\/.*$'; then /shippy/exec/shippy.js shopify feature; fi
