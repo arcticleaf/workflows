@@ -15,10 +15,18 @@ on:
         required: false
         type: boolean
         default: true
+      nodeVersion:
+        required: false
+        type: string
+        default: ''
     secrets:
       AL_GITHUB_AWS_ACCESS_KEY_ID:
         required: true
       AL_GITHUB_AWS_SECRET_ACCESS_KEY:
+        required: true
+      SHIPPY_SHOPIFY_API_KEY:
+        required: true
+      SLATE_PASSWORD:
         required: true
 
 jobs:
@@ -26,7 +34,7 @@ jobs:
     name: Shippy Deploy
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/arcticleaf/shippy-buildenv-ecomm:latest
+      image: ghcr.io/arcticleaf/shippy-buildenv-ecomm${{ inputs.nodeVersion }}:latest
       credentials:
         username: ${{ github.actor }}
         password: ${{ github.token }}
@@ -47,24 +55,33 @@ jobs:
         CI_PIPELINE_ID: ${{ github.run_id }}
         CI_JOB_ID: ${{ github.job }}
         REPOSITORY_URI: ${{ github.repositoryUrl }}
+        SHIPPY_SHOPIFY_API_KEY: ${{ secrets.SHIPPY_SHOPIFY_API_KEY }}
+        SLATE_PASSWORD: ${{ secrets.SLATE_PASSWORD }}
+        
     environment: ${{ github.ref_name }}
     steps:
     - name: Checkout Code
       uses: actions/checkout@v2
-      
+    
     # This prevents Shopify analytics from blocking slate script from running
     - run: echo '{"uuid":"5b5715c4-f5d1-40a0-9039-826f9ef3b77e","email":"fake@shopifysucks.com","tracking":false,"trackingVersion":1}' > ~/.slaterc
     - run: npm config set strict-ssl ${{ inputs.strictSSL }}
-    - run: npm ci
-
+    
+    - name: Install npm packages
+      continue-on-error: true
+      run: test -f ./package-lock.json && npm ci
+    
+    - name: Add keys to env file
+      run: |
+        echo "SHIPPY_SHOPIFY_API_KEY=${{ secrets.SHIPPY_SHOPIFY_API_KEY }}" >> .env
+        echo "SLATE_PASSWORD=${{ secrets.SLATE_PASSWORD }}" >> .env
+        cat .env
+    
     - name: Run shippy script
       run: if [ "${{ github.ref_name }}" = "production" ]; then /shippy/exec/shippy.js shopify production; elif [ "${{ github.ref_name }}" = "staging" ]; then /shippy/exec/shippy.js shopify staging; elif echo "${{ github.ref_name }}" | grep -Eq '^feature\/.*$'; then /shippy/exec/shippy.js shopify feature; fi
 
     - name: Stop theme
       run: bash /shippy/scripts/shippy-stop-theme.sh || echo "Failed trying to stop the Theme ... proceed anyway..."
-
-    - name: Warm theme
-      run: bash /shippy/scripts/shippy-warmup.sh
 
     - name: Archive artifacts
       uses: actions/upload-artifact@v2
