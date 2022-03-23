@@ -11,6 +11,10 @@ on:
         description: 'Region of the account to deploy into'
         type: string
         default: 'gitlab'
+      customScript:
+        required: false
+        type: string
+        default: 'echo No custom script to run.'
     secrets:
       AL_GITHUB_AWS_ACCESS_KEY_ID:
         required: true
@@ -56,6 +60,11 @@ jobs:
     
     - name: Add Stencil Access Key
       run: 'echo "{ \"accessToken\": \"${{ secrets.STENCIL_ACCESS_TOKEN }}\" }" > secrets.stencil.json'
+      
+    - name: Run custom script
+      shell: bash
+      run: |
+        ${{ inputs.customScript }}
 
     - name: Run shippy script
       run: if [ "${{ github.ref_name }}" = "production" ]; then /shippy/exec/shippy.js bigcommerce production; elif [ "${{ github.ref_name }}" = "staging" ]; then /shippy/exec/shippy.js bigcommerce staging; elif echo "${{ github.ref_name }}" | grep -Eq '^feature\/.*$'; then /shippy/exec/shippy.js bigcommerce feature; fi
