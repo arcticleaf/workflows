@@ -16,8 +16,6 @@ on:
         required: false
         type: boolean
     secrets:
-      HUBSPOT_PORTAL_ID:
-        required: true
       HUBSPOT_PERSONAL_ACCESS_KEY:
         required: true
 jobs:
