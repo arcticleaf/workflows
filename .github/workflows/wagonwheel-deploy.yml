@@ -8,6 +8,9 @@ on:
       root:
         required: true
         type: string
+      portalId:
+        required: true
+        type: string
       dev:
         default: false
         required: false
@@ -33,7 +36,7 @@ jobs:
       - run: npm install
 
       - name: Add Config
-        run: 'echo "{ \"dev\": \"${{ inputs.dev }}\", \"id\": \"${{ secrets.HUBSPOT_PORTAL_ID }}\", \"apiKey\": \"${{ secrets.HUBSPOT_PERSONAL_ACCESS_KEY }}\", \"destination\": \"${{ inputs.destination }}\", \"root\": \"${{ inputs.root }}\" }" > .wagonwheel.hubspot.json'
+        run: 'echo "{ \"dev\": \"${{ inputs.dev }}\", \"id\": \"${{ inputs.portalId }}\", \"apiKey\": \"${{ secrets.HUBSPOT_PERSONAL_ACCESS_KEY }}\", \"destination\": \"${{ inputs.destination }}\", \"root\": \"${{ inputs.root }}\" }" > .wagonwheel.hubspot.json'
       
       - name: Run WagonWheel
         run: npm run build -- build assets
