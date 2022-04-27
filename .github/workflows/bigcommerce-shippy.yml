@@ -25,6 +25,7 @@ on:
 
 jobs:
   reusable_shippy_deploy:
+    if:  ${{ github.event_name }} != 'delete'
     name: Shippy Deploy
     runs-on: ubuntu-latest
     container:
@@ -50,10 +51,7 @@ jobs:
         CI_JOB_ID: ${{ github.job }}
         REPOSITORY_URI: ${{ github.repositoryUrl }}
     environment: ${{ github.ref_name }}
-    steps:
-    - name: Test
-      run: echo ${{ github.event_name }}
-      
+    steps:      
     - name: Checkout Code
       uses: actions/checkout@v2
       
@@ -108,7 +106,7 @@ jobs:
           ${{ github.sha }}.zip
           Theme.json
   shippy_delete_theme:
-    if: github.event_name == 'delete' && contains(github.ref_name, 'feature/')
+    if: ${{ github.event_name }} == 'delete' && contains(${{ github.ref_name }}, 'feature/')
     name: Shippy Delete Theme
     runs-on: ubuntu-latest
     container:
