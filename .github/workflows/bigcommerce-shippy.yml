@@ -52,7 +52,7 @@ jobs:
     environment: ${{ github.ref_name }}
     steps:
     - name: Test
-      run: echo github.event_name && echo contains(github.ref_name, 'feature/')
+      run: echo github.event_name
       
     - name: Checkout Code
       uses: actions/checkout@v2
