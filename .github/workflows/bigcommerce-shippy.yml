@@ -51,6 +51,9 @@ jobs:
         REPOSITORY_URI: ${{ github.repositoryUrl }}
     environment: ${{ github.ref_name }}
     steps:
+    - name: Test
+      run: echo github.event_name && echo contains(github.ref_name, 'feature/')
+      
     - name: Checkout Code
       uses: actions/checkout@v2
       
