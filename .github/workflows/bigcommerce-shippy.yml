@@ -105,7 +105,7 @@ jobs:
           ${{ github.sha }}.zip
           Theme.json
   shippy_delete_theme:
-    if: github.event_name == 'delete' AND contains(github.ref_name, 'feature/')
+    if: github.event_name == 'delete' && contains(github.ref_name, 'feature/')
     name: Shippy Delete Theme
     runs-on: ubuntu-latest
     container:
