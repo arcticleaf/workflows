@@ -25,6 +25,7 @@ on:
 
 jobs:
   reusable_shippy_deploy:
+    if:  github.event_name != 'delete'
     name: Shippy Deploy
     runs-on: ubuntu-latest
     container:
@@ -50,7 +51,7 @@ jobs:
         CI_JOB_ID: ${{ github.job }}
         REPOSITORY_URI: ${{ github.repositoryUrl }}
     environment: ${{ github.ref_name }}
-    steps:
+    steps:      
     - name: Checkout Code
       uses: actions/checkout@v2
       
@@ -104,3 +105,35 @@ jobs:
           dist/
           ${{ github.sha }}.zip
           Theme.json
+  shippy_delete_theme:
+    if: github.event_name == 'delete'
+    name: Shippy Delete Theme
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/arcticleaf/shippy-buildenv-ecomm:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ github.token }}
+      env:
+        S3_BUCKET: 'deploy.shippy.${{ inputs.region }}'
+        S3_KEY: ${{ github.repository }}/${{ github.ref_name }}/${{ github.sha }}.zip
+        GITLAB_AWS_ACCESS_KEY_ID: ${{ secrets.AL_GITHUB_AWS_ACCESS_KEY_ID }}
+        GITLAB_AWS_SECRET_ACCESS_KEY: ${{ secrets.AL_GITHUB_AWS_SECRET_ACCESS_KEY }}
+        AWS_PROFILE: ${{ inputs.profile }}
+        AWS_REGION: ${{ inputs.region }}
+        CI_COMMIT_SHA: ${{ github.sha }}
+        CI_COMMIT_SHORT_SHA: ${{ github.sha }}
+        CI_COMMIT_REF_NAME: ${{ github.ref_name }}
+        CI_JOB_URL: ${{ github.run_id }}
+        CI_PIPELINE_URL: ${{ github.server_url }}
+        CI_PROJECT_URL: ${{ github.repository }}
+        CI_PROJECT_PATH: ${{ github.repository }}
+        CI_PIPELINE_ID: ${{ github.run_id }}
+        CI_JOB_ID: ${{ github.job }}
+        REPOSITORY_URI: ${{ github.repositoryUrl }}
+    environment: ${{ github.ref_name }}
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v2
+    - name: Run shippy delete
+      run: echo "delete"
