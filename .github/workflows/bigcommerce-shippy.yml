@@ -59,7 +59,7 @@ jobs:
       continue-on-error: true
       run: test -f ./package-lock.json && npm ci && npm run build
       
-    - name: Install npm packages and build project
+    - name: Install yarn packages and build project
       continue-on-error: true
       run: test -f ./yarn.lock && yarn install && yarn build
     
