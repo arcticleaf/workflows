@@ -6,25 +6,17 @@ on:
         description: 'Region of the account to deploy into'
         type: string
         default: 'us-east-1'
-      cloudformationStackName:
-        required: true
-        description: 'Name of the stack'
-        type: string
       environment:
         required: true
         description: 'The environment (prod, staging, etc.)'
         type: string
-      s3Bucket:
+      accountId:
         required: true
-        description: 'Name of the S3 bucket for deployment'
+        description: 'The AWS account ID'
         type: string
-      samConfig:
+      projectName:
         required: true
-        description: 'SAM Config'
-        type: string
-      deploymentNotifications:
-        required: true
-        description: 'Deployment notification email address'
+        description: 'The name of the project'
         type: string
       clientShort:
         required: true
@@ -45,11 +37,11 @@ env:
   AL_GITHUB_AWS_ACCESS_KEY_ID: ${{ secrets.AL_GITHUB_AWS_ACCESS_KEY_ID }}
   AL_GITHUB_AWS_SECRET_ACCESS_KEY: ${{ secrets.AL_GITHUB_AWS_SECRET_ACCESS_KEY }}
   CUSTOM_STACK_PARAMETERS: ${{ inputs.customStackParameters }}
-  CLOUDFORMATION_STACK_NAME: ${{ inputs.cloudformationStackName }}
+  CLOUDFORMATION_STACK_NAME: ${{ inputs.projectName }}-${{ inputs.environment }}
   ENVIRONMENT: ${{ inputs.environment }}
-  S3_BUCKET: ${{ inputs.s3Bucket }}
-  SAM_CONFIG: ${{ inputs.samConfig }}
-  DEPLOYMENT_NOTIFICATIONS: ${{ inputs.deploymentNotifications }}
+  S3_BUCKET: deploy.gitlab.${{ inputs.clientShort }}.dev
+  SAM_CONFIG: samconfig.toml
+  DEPLOYMENT_NOTIFICATIONS: arn:aws:sns:${{ inputs.region }}:${{ inputs.accoundId }}:CloudFormation-Notifications
   CLIENT_SHORT: ${{ inputs.clientShort }}
 
 jobs:
