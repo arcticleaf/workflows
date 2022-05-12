@@ -63,4 +63,4 @@ jobs:
       - name: Building SAM project
         run: sam build --use-container
       - name: Deploying SAM project
-        run: sam deploy --no-fail-on-empty-changeset --config-env $ENVIRONMENT --stack-name $CLOUDFORMATION_STACK_NAME --s3-prefix $CLOUDFORMATION_STACK_NAME --s3-bucket $S3_BUCKET --region $AWS_REGION --capabilities CAPABILITY_NAMED_IAM --config-file $SAM_CONFIG --parameter-overrides Environment=$ENVIRONMENT ${CUSTOM_STACK_PARAMETERS} --notification-arns $DEPLOYMENT_NOTIFICATIONS --tags ${CLIENT_SHORT}:deploy:env=${ENVIRONMENT}
+        run: sam deploy --no-fail-on-empty-changeset --config-env $ENVIRONMENT --stack-name $CLOUDFORMATION_STACK_NAME --s3-prefix $CLOUDFORMATION_STACK_NAME --s3-bucket $S3_BUCKET --region $AWS_REGION --capabilities CAPABILITY_NAMED_IAM --config-file $SAM_CONFIG --parameter-overrides Environment=$ENVIRONMENT ${CUSTOM_STACK_PARAMETERS} --notification-arns $DEPLOYMENT_NOTIFICATIONS --tags ${{ env.CLIENT_SHORT }}:deploy:env=${{ env.ENVIRONMENT }}
