@@ -6,15 +6,55 @@ on:
         description: 'Region of the account to deploy into'
         type: string
         default: 'us-east-1'
+      cloudformationStackName:
+        required: true
+        description: 'Name of the stack'
+        type: string
+      environment:
+        required: true
+        description: 'The environment (prod, staging, etc.)'
+        type: string
+      s3Bucket:
+        required: true
+        description: 'Name of the S3 bucket for deployment'
+        type: string
+      samConfig:
+        required: true
+        description: 'Name of the S3 bucket for deployment'
+        type: string
+      deploymentNotifications:
+        required: true
+        description: 'Name of the S3 bucket for deployment'
+        type: string
+      clientShort:
+        required: true
+        description: 'Name of the S3 bucket for deployment'
+        type: string
+      customStackParameters:
+        required: false
+        description: 'Additional stack specific environment variables'
+        type: string
+        default: ''
     secrets:
       AL_GITHUB_AWS_ACCESS_KEY_ID:
         required: true
       AL_GITHUB_AWS_SECRET_ACCESS_KEY:
         required: true
+env:
+  AWS_REGION: ${{ inputs.region }}
+  AL_GITHUB_AWS_ACCESS_KEY_ID: ${{ secrets.AL_GITHUB_AWS_ACCESS_KEY_ID }}
+  AL_GITHUB_AWS_SECRET_ACCESS_KEY: ${{ secrets.AL_GITHUB_AWS_SECRET_ACCESS_KEY }}
+  CUSTOM_STACK_PARAMETERS: ${{ inputs.customStackParameters }}
+  CLOUDFORMATION_STACK_NAME: ${{ inputs.cloudformationStackName }}
+  ENVIRONMENT: ${{ inputs.environment }}
+  S3_BUCKET: ${{ inputs.s3Bucket }}
+  SAM_CONFIG: ${{ inputs.samConfig }}
+  DEPLOYMENT_NOTIFICATIONS: ${{ inputs.deploymentNotifications }}
+  CLIENT_SHORT: ${{ inputs.clientShort }}
 
 jobs:
-  reusable_sam_deploy:
-    name: SAM Deploy
+  sam_deploy_prod:
+    name: SAM Build & Deploy
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -24,9 +64,10 @@ jobs:
       - uses: aws-actions/setup-sam@v2
       - uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AL_GITHUB_AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AL_GITHUB_AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ inputs.region }}
-      # sam build 
-      - run: sam build --use-container
-      - run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset
+          aws-access-key-id: $AL_GITHUB_AWS_ACCESS_KEY_ID
+          aws-secret-access-key: $AL_GITHUB_AWS_SECRET_ACCESS_KEY
+          aws-region: $AWS_REGION
+      - name: Building SAM project
+        run: sam build --use-container
+      - name: Deploying SAM project
+        run: sam deploy --no-fail-on-empty-changeset --config-env $ENVIRONMENT --stack-name $CLOUDFORMATION_STACK_NAME --s3-prefix $CLOUDFORMATION_STACK_NAME --s3-bucket $S3_BUCKET --region $AWS_REGION --capabilities CAPABILITY_NAMED_IAM --config-file $SAM_CONFIG --parameter-overrides Environment=$ENVIRONMENT ${CUSTOM_STACK_PARAMETERS} --notification-arns $DEPLOYMENT_NOTIFICATIONS --tags ${CLIENT_SHORT}:deploy:env=${ENVIRONMENT}
