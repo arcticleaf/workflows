@@ -20,15 +20,15 @@ on:
         type: string
       samConfig:
         required: true
-        description: 'Name of the S3 bucket for deployment'
+        description: 'SAM Config'
         type: string
       deploymentNotifications:
         required: true
-        description: 'Name of the S3 bucket for deployment'
+        description: 'Deployment notification email address'
         type: string
       clientShort:
         required: true
-        description: 'Name of the S3 bucket for deployment'
+        description: 'Short name for client'
         type: string
       customStackParameters:
         required: false
