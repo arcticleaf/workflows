@@ -6,58 +6,78 @@ on:
         description: 'Region of the account to deploy into'
         type: string
         default: 'us-east-1'
+      environment:
+        required: true
+        description: 'The environment (prod, staging, etc.)'
+        type: string
       accountId:
         required: true
-        description: 'Account id of the account being deployed into'
+        description: 'The AWS account ID'
         type: string
-      externalRoleId:
+      projectName:
         required: true
-        description: 'External role id of the role being used in the account being deployed into'
+        description: 'The name of the project'
         type: string
-      roleName:
+      clientShort:
         required: true
-        description: 'The role name used by GitHub to deploy'
+        description: 'Short name for client'
         type: string
-        default: 'arcticleaf'
+      s3Bucket:
+        required: true
+        description: 'S3 deploy bucket'
+        type: string
+      customStackParameters:
+        required: false
+        description: 'Additional stack specific environment variables'
+        type: string
+        default: ''
     secrets:
       AL_GITHUB_AWS_ACCESS_KEY_ID:
         required: true
       AL_GITHUB_AWS_SECRET_ACCESS_KEY:
         required: true
+      AWS_EXTERNAL_ID:
+        required: true
+      customStackParameters:
+        required: false
+        description: 'Additional secret stack specific environment variables'
+
 jobs:
-  reusable_cdk_deploy:
-    name: Deploy CDK to AWS account
+  cdk_deploy:
+    name: CDK Synth & Deploy
     runs-on: ubuntu-latest
     environment: ${{ github.ref_name }}
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v2
-      
-    - name: Install Node & Dependencies
-      uses: actions/setup-node@v2
-      with:
-        node-version-file: '.nvmrc'
-    - run: npm install
-
-    - name: Install AWS CDK
-      run: npm install -g aws-cdk
-
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        role-to-assume: 'arn:aws:iam::${{ inputs.accountId }}:role/${{ inputs.roleName }}'
-        aws-region: ${{ inputs.region }}
-        aws-access-key-id: ${{ secrets.AL_GITHUB_AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AL_GITHUB_AWS_SECRET_ACCESS_KEY }}
-        role-external-id: ${{ inputs.externalRoleId }}
-        role-duration-seconds: 1200
-        role-skip-session-tagging: true
-    
-    - name: Build project
-      run: npm run build
-      
-    - name: CDK Synth
-      run: cdk synth
-    
-    - name: CDK Deploy
-      run: cdk deploy
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v2
+        with:
+          node-version-file: '.nvmrc'
+      - uses: aws-actions/setup-sam@v2
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AL_GITHUB_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AL_GITHUB_AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ inputs.region }}
+          role-to-assume: arn:aws:iam::${{ inputs.accountId }}:role/arcticleaf/Deployment
+          role-session-name: github-ci
+          role-external-id: ${{ secrets.AWS_EXTERNAL_ID }}
+          role-duration-seconds: 3599
+          role-skip-session-tagging: true
+      - name: Installing dependencies
+        run: npm install
+      - name: Synthesizing
+        run: cdk synth
+      - name: Building & Deploying
+        run: cdk deploy --strict \
+               --outputs-file cdk-outputs.json \
+               --notification-arns   $DEPLOYMENT_NOTIFICATIONS \
+               --tags                ... \
+               --progress            events \
+               --region              ${{ inputs.region }}
+               --context             Environment=$ENVIRONMENT \
+               --parameters          Environment=$ENVIRONMENT
+        --change-set-name ${{ inputs.projectName }}-${{ inputs.environment }}  
+        --notification-arns arn:aws:sns:${{ inputs.region }}:${{ inputs.accountId }}:CloudFormation-Notifications 
+        --context Environment=${{ inputs.environment }}
+        --parameters ${{ inputs.customStackParameters }} ${{ secrets.customStackParameters }} 
+        --tags ${{ inputs.clientShort }}:deploy:env=${{ inputs.environment }}
