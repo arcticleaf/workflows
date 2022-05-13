@@ -32,6 +32,8 @@ on:
         required: true
       AL_GITHUB_AWS_SECRET_ACCESS_KEY:
         required: true
+      AWS_EXTERNAL_ID:
+        required: true
       customStackParameters:
         required: false
         description: 'Additional secret stack specific environment variables'
@@ -54,6 +56,7 @@ jobs:
           aws-region: ${{ inputs.region }}
           role-to-assume: arn:aws:iam::${{ inputs.accountId }}:role/arcticleaf/Deployment
           role-session-name: github-ci
+          role-external-id: ${{ secrets.AWS_EXTERNAL_ID }}
       - name: Building SAM project
         run: sam build --use-container
       - name: Deploying SAM project
