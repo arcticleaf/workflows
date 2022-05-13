@@ -35,18 +35,6 @@ on:
       customStackParameters:
         required: false
         description: 'Additional secret stack specific environment variables'
-env:
-  AWS_REGION: ${{ inputs.region }}
-  AL_GITHUB_AWS_ACCESS_KEY_ID: ${{ secrets.AL_GITHUB_AWS_ACCESS_KEY_ID }}
-  AL_GITHUB_AWS_SECRET_ACCESS_KEY: ${{ secrets.AL_GITHUB_AWS_SECRET_ACCESS_KEY }}
-  CUSTOM_STACK_PARAMETERS: ${{ inputs.customStackParameters }}
-  SECRET_CUSTOM_STACK_PARAMETERS: ${{ secrets.customStackParameters }}
-  CLOUDFORMATION_STACK_NAME: ${{ inputs.projectName }}-${{ inputs.environment }}
-  ENVIRONMENT: ${{ inputs.environment }}
-  S3_BUCKET: deploy.gitlab.${{ inputs.clientShort }}.dev
-  SAM_CONFIG: samconfig.toml
-  DEPLOYMENT_NOTIFICATIONS: arn:aws:sns:${{ inputs.region }}:${{ inputs.accoundId }}:CloudFormation-Notifications
-  CLIENT_SHORT: ${{ inputs.clientShort }}
 
 jobs:
   sam_deploy_prod:
@@ -61,10 +49,10 @@ jobs:
       - uses: aws-actions/setup-sam@v2
       - uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: $AL_GITHUB_AWS_ACCESS_KEY_ID
-          aws-secret-access-key: $AL_GITHUB_AWS_SECRET_ACCESS_KEY
-          aws-region: $AWS_REGION
+          aws-access-key-id: ${{ secrets.AL_GITHUB_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AL_GITHUB_AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ inputs.region }}
       - name: Building SAM project
         run: sam build --use-container
       - name: Deploying SAM project
-        run: sam deploy --no-fail-on-empty-changeset --config-env $ENVIRONMENT --stack-name $CLOUDFORMATION_STACK_NAME --s3-prefix $CLOUDFORMATION_STACK_NAME --s3-bucket $S3_BUCKET --region $AWS_REGION --capabilities CAPABILITY_NAMED_IAM --config-file $SAM_CONFIG --parameter-overrides Environment=$ENVIRONMENT $CUSTOM_STACK_PARAMETERS $SECRET_CUSTOM_STACK_PARAMETERS --notification-arns $DEPLOYMENT_NOTIFICATIONS --tags ${{ env.CLIENT_SHORT }}:deploy:env=${{ env.ENVIRONMENT }}
+        run: sam deploy --no-fail-on-empty-changeset --config-env ${{ inputs.environment }} --stack-name ${{ inputs.projectName }}-${{ inputs.environment }} --s3-prefix ${{ inputs.projectName }}-${{ inputs.environment }} --s3-bucket deploy.gitlab.${{ inputs.clientShort }}.dev --region ${{ inputs.region }} --capabilities CAPABILITY_NAMED_IAM --config-file samconfig.toml --parameter-overrides Environment=${{ inputs.environment }} ${{ inputs.customStackParameters }} ${{ secrets.customStackParameters }} --notification-arns arn:aws:sns:${{ inputs.region }}:${{ inputs.accoundId }}:CloudFormation-Notifications --tags ${{ inputs.clientShort }}:deploy:env=${{ inputs.environment }}
