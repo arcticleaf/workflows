@@ -22,6 +22,10 @@ on:
         required: true
         description: 'Short name for client'
         type: string
+      s3Bucket:
+        required: true
+        description: 'S3 deploy bucket'
+        type: string
       customStackParameters:
         required: false
         description: 'Additional stack specific environment variables'
@@ -39,7 +43,7 @@ on:
         description: 'Additional secret stack specific environment variables'
 
 jobs:
-  sam_deploy_prod:
+  sam_deploy:
     name: SAM Build & Deploy
     runs-on: ubuntu-latest
     environment: ${{ github.ref_name }}
@@ -62,4 +66,6 @@ jobs:
       - name: Building SAM project
         run: sam build --use-container
       - name: Deploying SAM project
-        run: sam deploy --no-fail-on-empty-changeset --config-env ${{ inputs.environment }} --stack-name ${{ inputs.projectName }}-${{ inputs.environment }} --s3-prefix ${{ inputs.projectName }}-${{ inputs.environment }} --s3-bucket deploy.gitlab.${{ inputs.clientShort }}.dev --region ${{ inputs.region }} --capabilities CAPABILITY_NAMED_IAM --config-file samconfig.toml --parameter-overrides Environment=${{ inputs.environment }} ${{ inputs.customStackParameters }} ${{ secrets.customStackParameters }} --tags ${{ inputs.clientShort }}:deploy:env=${{ inputs.environment }}
+        run: |
+          
+          sam deploy --no-fail-on-empty-changeset --config-env ${{ inputs.environment }} --stack-name ${{ inputs.projectName }}-${{ inputs.environment }} --s3-prefix ${{ inputs.projectName }}-${{ inputs.environment }} --s3-bucket ${{ inputs.s3Bucket }} --region ${{ inputs.region }} --notification-arns arn:aws:sns:${{ inputs.region }}:${{ inputs.accountId }}:CloudFormation-Notifications --capabilities CAPABILITY_NAMED_IAM --config-file samconfig.toml --parameter-overrides Environment=${{ inputs.environment }} ${{ inputs.customStackParameters }} ${{ secrets.customStackParameters }} --tags ${{ inputs.clientShort }}:deploy:env=${{ inputs.environment }}
