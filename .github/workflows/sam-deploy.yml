@@ -32,11 +32,15 @@ on:
         required: true
       AL_GITHUB_AWS_SECRET_ACCESS_KEY:
         required: true
+      customStackParameters:
+        required: false
+        description: 'Additional secret stack specific environment variables'
 env:
   AWS_REGION: ${{ inputs.region }}
   AL_GITHUB_AWS_ACCESS_KEY_ID: ${{ secrets.AL_GITHUB_AWS_ACCESS_KEY_ID }}
   AL_GITHUB_AWS_SECRET_ACCESS_KEY: ${{ secrets.AL_GITHUB_AWS_SECRET_ACCESS_KEY }}
   CUSTOM_STACK_PARAMETERS: ${{ inputs.customStackParameters }}
+  SECRET_CUSTOM_STACK_PARAMETERS: ${{ secrets.customStackParameters }}
   CLOUDFORMATION_STACK_NAME: ${{ inputs.projectName }}-${{ inputs.environment }}
   ENVIRONMENT: ${{ inputs.environment }}
   S3_BUCKET: deploy.gitlab.${{ inputs.clientShort }}.dev
@@ -63,4 +67,4 @@ jobs:
       - name: Building SAM project
         run: sam build --use-container
       - name: Deploying SAM project
-        run: sam deploy --no-fail-on-empty-changeset --config-env $ENVIRONMENT --stack-name $CLOUDFORMATION_STACK_NAME --s3-prefix $CLOUDFORMATION_STACK_NAME --s3-bucket $S3_BUCKET --region $AWS_REGION --capabilities CAPABILITY_NAMED_IAM --config-file $SAM_CONFIG --parameter-overrides Environment=$ENVIRONMENT ${CUSTOM_STACK_PARAMETERS} --notification-arns $DEPLOYMENT_NOTIFICATIONS --tags ${{ env.CLIENT_SHORT }}:deploy:env=${{ env.ENVIRONMENT }}
+        run: sam deploy --no-fail-on-empty-changeset --config-env $ENVIRONMENT --stack-name $CLOUDFORMATION_STACK_NAME --s3-prefix $CLOUDFORMATION_STACK_NAME --s3-bucket $S3_BUCKET --region $AWS_REGION --capabilities CAPABILITY_NAMED_IAM --config-file $SAM_CONFIG --parameter-overrides Environment=$ENVIRONMENT $CUSTOM_STACK_PARAMETERS $SECRET_CUSTOM_STACK_PARAMETERS --notification-arns $DEPLOYMENT_NOTIFICATIONS --tags ${{ env.CLIENT_SHORT }}:deploy:env=${{ env.ENVIRONMENT }}
