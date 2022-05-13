@@ -22,13 +22,10 @@ on:
         required: true
         description: 'Short name for client'
         type: string
-<<<<<<< HEAD
-=======
       s3Bucket:
         required: true
         description: 'S3 deploy bucket'
         type: string
->>>>>>> production
       customStackParameters:
         required: false
         description: 'Additional stack specific environment variables'
@@ -39,21 +36,14 @@ on:
         required: true
       AL_GITHUB_AWS_SECRET_ACCESS_KEY:
         required: true
-<<<<<<< HEAD
-=======
       AWS_EXTERNAL_ID:
         required: true
->>>>>>> production
       customStackParameters:
         required: false
         description: 'Additional secret stack specific environment variables'
 
 jobs:
-<<<<<<< HEAD
-  sam_deploy_prod:
-=======
   sam_deploy:
->>>>>>> production
     name: SAM Build & Deploy
     runs-on: ubuntu-latest
     environment: ${{ github.ref_name }}
@@ -68,12 +58,6 @@ jobs:
           aws-access-key-id: ${{ secrets.AL_GITHUB_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AL_GITHUB_AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ inputs.region }}
-<<<<<<< HEAD
-      - name: Building SAM project
-        run: sam build --use-container
-      - name: Deploying SAM project
-        run: sam deploy --no-fail-on-empty-changeset --config-env ${{ inputs.environment }} --stack-name ${{ inputs.projectName }}-${{ inputs.environment }} --s3-prefix ${{ inputs.projectName }}-${{ inputs.environment }} --s3-bucket deploy.gitlab.${{ inputs.clientShort }}.dev --region ${{ inputs.region }} --capabilities CAPABILITY_NAMED_IAM --config-file samconfig.toml --parameter-overrides Environment=${{ inputs.environment }} ${{ inputs.customStackParameters }} ${{ secrets.customStackParameters }} --notification-arns arn:aws:sns:${{ inputs.region }}:${{ inputs.accoundId }}:CloudFormation-Notifications --tags ${{ inputs.clientShort }}:deploy:env=${{ inputs.environment }}
-=======
           role-to-assume: arn:aws:iam::${{ inputs.accountId }}:role/arcticleaf/Deployment
           role-session-name: github-ci
           role-external-id: ${{ secrets.AWS_EXTERNAL_ID }}
@@ -83,4 +67,3 @@ jobs:
         run: sam build --use-container
       - name: Deploying SAM project
         run: sam deploy --no-fail-on-empty-changeset --config-env ${{ inputs.environment }} --stack-name ${{ inputs.projectName }}-${{ inputs.environment }} --s3-prefix ${{ inputs.projectName }}-${{ inputs.environment }} --s3-bucket ${{ inputs.s3Bucket }} --region ${{ inputs.region }} --notification-arns arn:aws:sns:${{ inputs.region }}:${{ inputs.accountId }}:CloudFormation-Notifications --capabilities CAPABILITY_NAMED_IAM --config-file samconfig.toml --parameter-overrides Environment=${{ inputs.environment }} ${{ inputs.customStackParameters }} ${{ secrets.customStackParameters }} --tags ${{ inputs.clientShort }}:deploy:env=${{ inputs.environment }}
->>>>>>> production
