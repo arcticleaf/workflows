@@ -52,6 +52,7 @@ jobs:
           aws-access-key-id: ${{ secrets.AL_GITHUB_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AL_GITHUB_AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ inputs.region }}
+          role-to-assume: arn:aws:iam::${{ secrets.accountId }}:role/gitlab-ci
       - name: Building SAM project
         run: sam build --use-container
       - name: Deploying SAM project
