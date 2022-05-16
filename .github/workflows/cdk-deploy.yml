@@ -22,10 +22,6 @@ on:
         required: true
         description: 'Short name for client'
         type: string
-      s3Bucket:
-        required: true
-        description: 'S3 deploy bucket'
-        type: string
       customStackParameters:
         required: false
         description: 'Additional stack specific environment variables'
@@ -68,16 +64,14 @@ jobs:
       - name: Synthesizing
         run: cdk synth
       - name: Building & Deploying
-        run: cdk deploy --strict \
-               --outputs-file cdk-outputs.json \
-               --notification-arns   $DEPLOYMENT_NOTIFICATIONS \
-               --tags                ... \
-               --progress            events \
-               --region              ${{ inputs.region }}
-               --context             Environment=$ENVIRONMENT \
-               --parameters          Environment=$ENVIRONMENT
-        --change-set-name ${{ inputs.projectName }}-${{ inputs.environment }}  
-        --notification-arns arn:aws:sns:${{ inputs.region }}:${{ inputs.accountId }}:CloudFormation-Notifications 
-        --context Environment=${{ inputs.environment }}
-        --parameters ${{ inputs.customStackParameters }} ${{ secrets.customStackParameters }} 
-        --tags ${{ inputs.clientShort }}:deploy:env=${{ inputs.environment }}
+        run: >
+          cdk deploy --strict
+                     --outputs-file       cdk-outputs.json
+                     --notification-arns  arn:aws:sns:${{ inputs.region }}:${{ inputs.accountId }}:CloudFormation-Notifications
+                     --tags               ${{ inputs.clientShort }}:deploy:env=${{ inputs.environment }}
+                     --progress           events
+                     --region             ${{ inputs.region }}
+                     --change-set-name    ${{ inputs.projectName }}-${{ inputs.environment }}
+                     --context            Environment=${{ inputs.environment }} ${{ inputs.customStackParameters }} ${{ secrets.customStackParameters }}
+                     --parameters         Environment=${{ inputs.environment }} ${{ inputs.customStackParameters }} ${{ secrets.customStackParameters }}
+        
