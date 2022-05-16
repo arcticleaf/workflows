@@ -61,16 +61,6 @@ jobs:
       - name: Installing dependencies
         run: npm install
       - name: Synthesizing
-        run: cdk synth
+        run: npx cdk synth
       - name: Building & Deploying
-        run: >
-          cdk deploy --strict
-                     --outputs-file       cdk-outputs.json
-                     --notification-arns  arn:aws:sns:${{ inputs.region }}:${{ inputs.accountId }}:CloudFormation-Notifications
-                     --tags               ${{ inputs.clientShort }}:deploy:env=${{ inputs.environment }}
-                     --progress           events
-                     --region             ${{ inputs.region }}
-                     --change-set-name    ${{ inputs.projectName }}-${{ inputs.environment }}
-                     --context            Environment=${{ inputs.environment }} ${{ inputs.customStackParameters }} ${{ secrets.customStackParameters }}
-                     --parameters         Environment=${{ inputs.environment }} ${{ inputs.customStackParameters }} ${{ secrets.customStackParameters }}
-        
+        run: npx cdk deploy --strict --notification-arns arn:aws:sns:${{ inputs.region }}:${{ inputs.accountId }}:CloudFormation-Notifications --tags ${{ inputs.clientShort }}:deploy:env=${{ inputs.environment }} --progress events --region ${{ inputs.region }} --change-set-name ${{ inputs.projectName }}-${{ inputs.environment }} --context Environment=${{ inputs.environment }} ${{ inputs.customStackParameters }} ${{ secrets.customStackParameters }} ${{ inputs.projectName }}-${{ inputs.environment }}
