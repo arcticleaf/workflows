@@ -63,5 +63,4 @@ jobs:
       - name: Synthesizing
         run: npx cdk synth
       - name: Building & Deploying
-        run: npx cdk deploy --strict --notification-arns arn:aws:sns:${{ inputs.region }}:${{ inputs.accountId }}:CloudFormation-Notifications --tags ${{ inputs.clientShort }}:deploy:env=${{ inputs.environment }} --progress events --region ${{ inputs.region }} --change-set-name ${{ inputs.projectName }}-${{ inputs.environment }} --context Environment=${{ inputs.environment }} --parameters Environment=${{ inputs.environment }} ${{ inputs.customStackParameters }} ${{ secrets.customStackParameters }}
-        
+        run: npx cdk deploy --strict --notification-arns arn:aws:sns:${{ inputs.region }}:${{ inputs.accountId }}:CloudFormation-Notifications --tags ${{ inputs.clientShort }}:deploy:env=${{ inputs.environment }} --progress events --region ${{ inputs.region }} --change-set-name ${{ inputs.projectName }}-${{ inputs.environment }} --context Environment=${{ inputs.environment }} --parameters Environment=${{ inputs.environment }} ${{ inputs.customStackParameters }} ${{ secrets.customStackParameters }} ${{ inputs.projectName }}-${{ inputs.environment }}
