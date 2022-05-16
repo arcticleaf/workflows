@@ -64,8 +64,8 @@ jobs:
         run: npx cdk synth
       - name: Building & Deploying
         run: >
-          npx cdk deploy --strict
-                     --outputs-file       cdk-outputs.json
+          npx cdk deploy 
+                     --strict
                      --notification-arns  arn:aws:sns:${{ inputs.region }}:${{ inputs.accountId }}:CloudFormation-Notifications
                      --tags               ${{ inputs.clientShort }}:deploy:env=${{ inputs.environment }}
                      --progress           events
