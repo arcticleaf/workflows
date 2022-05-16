@@ -61,10 +61,10 @@ jobs:
       - name: Installing dependencies
         run: npm install
       - name: Synthesizing
-        run: cdk synth
+        run: npx cdk synth
       - name: Building & Deploying
         run: >
-          cdk deploy --strict
+          npx cdk deploy --strict
                      --outputs-file       cdk-outputs.json
                      --notification-arns  arn:aws:sns:${{ inputs.region }}:${{ inputs.accountId }}:CloudFormation-Notifications
                      --tags               ${{ inputs.clientShort }}:deploy:env=${{ inputs.environment }}
