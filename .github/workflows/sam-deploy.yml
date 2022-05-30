@@ -67,6 +67,8 @@ jobs:
           role-external-id: ${{ secrets.AWS_EXTERNAL_ID }}
           role-duration-seconds: 3599
           role-skip-session-tagging: true
+      - name: Install modules
+        run: npm install
       - name: Run custom script
         shell: bash
         run: |
