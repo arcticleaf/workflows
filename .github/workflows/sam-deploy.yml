@@ -70,7 +70,6 @@ jobs:
       - name: Install modules
         run: npm install
       - name: Run custom script
-        shell: bash
         run: |
           ${{ inputs.customScript }}
       - name: Building SAM project
