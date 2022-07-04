@@ -139,5 +139,7 @@ jobs:
     steps:
     - name: Checkout Code
       uses: actions/checkout@v2
+      with:
+        ref: 'staging'
     - name: Run shippy delete
       run: /shippy/exec/shippy.js bigcommerce feature --stop || echo "Failed trying to delete the Theme ... proceed anyway..."
