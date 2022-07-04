@@ -140,4 +140,4 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v2
     - name: Run shippy delete
-      run: bash /shippy/exec/shippy.js bigcommerce feature --stop || echo "Failed trying to delete the Theme ... proceed anyway..."
+      run: /shippy/exec/shippy.js bigcommerce feature --stop || echo "Failed trying to delete the Theme ... proceed anyway..."
