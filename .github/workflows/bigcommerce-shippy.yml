@@ -11,6 +11,11 @@ on:
         description: 'Region of the account to deploy into'
         type: string
         default: 'gitlab'
+      dotStencil:
+        required: false
+        description: 'Used to find the config file'
+        type: string
+        default: 'config.stencil.json'
       customScript:
         required: false
         type: string
@@ -50,6 +55,7 @@ jobs:
         CI_PIPELINE_ID: ${{ github.run_id }}
         CI_JOB_ID: ${{ github.job }}
         REPOSITORY_URI: ${{ github.repositoryUrl }}
+        BIGCOMMERCE_DOT_STENCIL: ${{ inputs.dotStencil }}
     environment: ${{ github.ref_name }}
     steps:      
     - name: Checkout Code
