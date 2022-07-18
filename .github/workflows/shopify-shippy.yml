@@ -18,7 +18,7 @@ on:
       nodeVersion:
         required: false
         type: string
-        default: ''
+        default: ':latest'
       customScript:
         required: false
         type: string
@@ -42,7 +42,7 @@ jobs:
     name: Shippy Deploy
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/arcticleaf/shippy-buildenv-ecomm${{ inputs.nodeVersion }}:latest
+      image: ghcr.io/arcticleaf/shippy-buildenv-ecomm${{ inputs.nodeVersion }}
       credentials:
         username: ${{ github.actor }}
         password: ${{ github.token }}
