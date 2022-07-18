@@ -42,7 +42,7 @@ jobs:
     name: Shippy Deploy
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/arcticleaf/shippy-buildenv-ecomm${{ inputs.nodeVersion }}@sha256:cd7d69729b7e90f84f3a47236c12cd0466266f2ff9b5fd4e3de57023eb4cff64
+      image: ghcr.io/arcticleaf/shippy-buildenv-ecomm${{ inputs.nodeVersion }}-latest
       credentials:
         username: ${{ github.actor }}
         password: ${{ github.token }}
