@@ -31,6 +31,10 @@ on:
         description: 'Additional stack specific environment variables'
         type: string
         default: ''
+      customScript:
+        required: false
+        type: string
+        default: 'echo No custom script to run.'
     secrets:
       AL_GITHUB_AWS_ACCESS_KEY_ID:
         required: true
@@ -63,6 +67,11 @@ jobs:
           role-external-id: ${{ secrets.AWS_EXTERNAL_ID }}
           role-duration-seconds: 3599
           role-skip-session-tagging: true
+      - name: Install modules
+        run: npm install
+      - name: Run custom script
+        run: |
+          ${{ inputs.customScript }}
       - name: Building SAM project
         run: sam build --use-container
       - name: Deploying SAM project
